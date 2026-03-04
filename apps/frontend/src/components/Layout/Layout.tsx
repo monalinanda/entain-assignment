@@ -6,13 +6,17 @@ interface LayoutProps {
   children: ReactNode;
   searchQuery: string;
   onSearchChange: (value: string) => void;
+  sidebar?: ReactNode;
 }
 
-function Layout({ children, searchQuery, onSearchChange }: LayoutProps) {
+function Layout({ children, searchQuery, onSearchChange, sidebar }: LayoutProps) {
   return (
     <div className={styles.wrapper}>
       <Header searchQuery={searchQuery} onSearchChange={onSearchChange} />
-      <main className={styles.main}>{children}</main>
+      <div className={styles.body}>
+        <main className={styles.main}>{children}</main>
+        {sidebar && <div className={styles.sidebar}>{sidebar}</div>}
+      </div>
     </div>
   );
 }

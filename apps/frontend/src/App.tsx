@@ -1,8 +1,9 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Layout from './components/Layout/Layout';
 import MovieGrid from './components/MovieGrid/MovieGrid';
 import Loader from './components/Loader/Loader';
 import GenreFilter from './components/GenreFilter/GenreFilter';
+import RecentSearches from './components/RecentSearches/RecentSearches';
 import {
   useGetPopularMoviesQuery,
   useSearchMoviesQuery,
@@ -10,14 +11,26 @@ import {
   useGetMoviesByGenreQuery,
 } from './store/api/moviesApi';
 import useDebounce from './hooks/useDebounce';
+import useRecentSearches from './hooks/useRecentSearches';
 
 function App() {
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedGenreId, setSelectedGenreId] = useState<number | null>(null);
   const debouncedQuery = useDebounce(searchQuery, 300);
 
+  const { recentSearches, addSearch, clearSearches } = useRecentSearches();
+
   const isSearching = debouncedQuery.trim().length > 0;
   const isFilteringByGenre = !isSearching && selectedGenreId !== null;
+
+  // Record a search term once the debounced value settles and is non-empty
+  useEffect(() => {
+    if (debouncedQuery.trim().length > 0) {
+      addSearch(debouncedQuery.trim());
+    }
+    // addSearch is stable (defined outside render), debouncedQuery drives the effect
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [debouncedQuery]);
 
   // Always fetch genres for the filter bar
   const { data: genresData } = useGetGenresQuery();
@@ -52,8 +65,21 @@ function App() {
     if (value.trim().length > 0) setSelectedGenreId(null);
   };
 
+  const handleRecentSearchSelect = (term: string) => {
+    setSearchQuery(term);
+    setSelectedGenreId(null);
+  };
+
+  const sidebar = (
+    <RecentSearches
+      searches={recentSearches}
+      onSelect={handleRecentSearchSelect}
+      onClear={clearSearches}
+    />
+  );
+
   return (
-    <Layout searchQuery={searchQuery} onSearchChange={handleSearchChange}>
+    <Layout searchQuery={searchQuery} onSearchChange={handleSearchChange} sidebar={sidebar}>
       {genresData && (
         <GenreFilter
           genres={genresData.genres}
