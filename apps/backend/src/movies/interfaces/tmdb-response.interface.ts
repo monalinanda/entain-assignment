@@ -24,3 +24,12 @@ export interface TmdbPopularResponse {
 
 // Search uses the same paginated structure as popular
 export type TmdbSearchResponse = TmdbPopularResponse;
+
+export interface TmdbGenre {
+  id: number;
+  name: string;
+}
+
+export interface TmdbGenresResponse {
+  genres: TmdbGenre[];
+}

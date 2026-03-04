@@ -1,6 +1,14 @@
-import { Controller, Get, Query, ParseIntPipe, DefaultValuePipe, BadRequestException } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Query,
+  ParseIntPipe,
+  DefaultValuePipe,
+  BadRequestException,
+} from '@nestjs/common';
 import { MoviesService } from './movies.service';
 import type { MovieResponseDto } from './dto/movie-response.dto';
+import type { GenresResponseDto } from './dto/genres-response.dto';
 
 @Controller('movies')
 export class MoviesController {
@@ -22,5 +30,18 @@ export class MoviesController {
       throw new BadRequestException('query param must be a non-empty string');
     }
     return this.moviesService.searchMovies(query.trim(), page);
+  }
+
+  @Get('genres')
+  getGenres(): Promise<GenresResponseDto> {
+    return this.moviesService.getGenres();
+  }
+
+  @Get('discover')
+  discoverByGenre(
+    @Query('genreId', ParseIntPipe) genreId: number,
+    @Query('page', new DefaultValuePipe(1), ParseIntPipe) page: number,
+  ): Promise<MovieResponseDto> {
+    return this.moviesService.discoverByGenre(genreId, page);
   }
 }

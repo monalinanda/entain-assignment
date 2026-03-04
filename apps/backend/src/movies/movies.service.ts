@@ -7,8 +7,10 @@ import type {
   TmdbMovie,
   TmdbPopularResponse,
   TmdbSearchResponse,
+  TmdbGenresResponse,
 } from './interfaces/tmdb-response.interface';
 import type { MovieResponseDto } from './dto/movie-response.dto';
+import type { GenresResponseDto } from './dto/genres-response.dto';
 
 const POSTER_BASE_URL = 'https://image.tmdb.org/t/p/w500';
 
@@ -44,15 +46,9 @@ export class MoviesService {
       const response = await firstValueFrom(
         this.httpService.get<TmdbPopularResponse>(
           `${this.baseUrl}/movie/popular`,
-          {
-            params: {
-              api_key: this.apiKey,
-              page,
-            },
-          },
+          { params: { api_key: this.apiKey, page } },
         ),
       );
-
       const data = response.data;
       return {
         movies: data.results.map((movie) => this.transformMovie(movie)),
@@ -62,9 +58,7 @@ export class MoviesService {
     } catch (error: unknown) {
       const message =
         error instanceof Error ? error.message : 'Failed to fetch movies';
-      throw new InternalServerErrorException(
-        `TMDB API error: ${message}`,
-      );
+      throw new InternalServerErrorException(`TMDB API error: ${message}`);
     }
   }
 
@@ -73,16 +67,9 @@ export class MoviesService {
       const response = await firstValueFrom(
         this.httpService.get<TmdbSearchResponse>(
           `${this.baseUrl}/search/movie`,
-          {
-            params: {
-              api_key: this.apiKey,
-              query,
-              page,
-            },
-          },
+          { params: { api_key: this.apiKey, query, page } },
         ),
       );
-
       const data = response.data;
       return {
         movies: data.results.map((movie) => this.transformMovie(movie)),
@@ -92,6 +79,43 @@ export class MoviesService {
     } catch (error: unknown) {
       const message =
         error instanceof Error ? error.message : 'Failed to search movies';
+      throw new InternalServerErrorException(`TMDB API error: ${message}`);
+    }
+  }
+
+  async getGenres(): Promise<GenresResponseDto> {
+    try {
+      const response = await firstValueFrom(
+        this.httpService.get<TmdbGenresResponse>(
+          `${this.baseUrl}/genre/movie/list`,
+          { params: { api_key: this.apiKey } },
+        ),
+      );
+      return { genres: response.data.genres };
+    } catch (error: unknown) {
+      const message =
+        error instanceof Error ? error.message : 'Failed to fetch genres';
+      throw new InternalServerErrorException(`TMDB API error: ${message}`);
+    }
+  }
+
+  async discoverByGenre(genreId: number, page: number = 1): Promise<MovieResponseDto> {
+    try {
+      const response = await firstValueFrom(
+        this.httpService.get<TmdbPopularResponse>(
+          `${this.baseUrl}/discover/movie`,
+          { params: { api_key: this.apiKey, with_genres: genreId, page } },
+        ),
+      );
+      const data = response.data;
+      return {
+        movies: data.results.map((movie) => this.transformMovie(movie)),
+        page: data.page,
+        totalPages: data.total_pages,
+      };
+    } catch (error: unknown) {
+      const message =
+        error instanceof Error ? error.message : 'Failed to discover movies';
       throw new InternalServerErrorException(`TMDB API error: ${message}`);
     }
   }
