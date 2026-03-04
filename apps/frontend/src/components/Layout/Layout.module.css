@@ -25,7 +25,7 @@
 
 @media (max-width: 768px) {
   .body {
-    flex-direction: column;
+    flex-direction: column-reverse;
     padding: 16px;
     gap: 16px;
   }

@@ -2,11 +2,9 @@
   display: flex;
   align-items: center;
   gap: 8px;
+  flex-wrap: wrap;
   padding: 12px 24px;
   overflow-x: auto;
-  /* Hide scrollbar but keep scroll behaviour */
-  scrollbar-width: none;
-  -ms-overflow-style: none;
 }
 
 .wrapper::-webkit-scrollbar {
@@ -37,4 +35,10 @@
   color: var(--color-surface);
   background-color: var(--color-accent);
   border-color: var(--color-accent);
+}
+
+@media (max-width: 768px) {
+  .wrapper {
+    justify-content: center;
+  }
 }
