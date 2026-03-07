@@ -37,7 +37,7 @@ while implemeted code in my project and read nestjs documentation and understand
 
 
 
-# Scalability Questuion 
+# Scalability question
 
 ## If this service reached got 10k requests/second, where would the first bottleneck in current code ?
 
