@@ -1,6 +1,6 @@
 # AI Disclosure
 
-I used chatGPT and Copilot copilot to help me to understand Nestjs. It is new to me  and i had not work with it before . I mainly used AI to understand how the services and controller  structure work  and see the simple examples implementaion for fetching data from API .
+I used ChatGPT and Copilot  to help me to understand Nestjs. It is new to me  and i had not work with it before . I mainly used AI to understand how the services and controller  structure work  and see the simple examples implementaion for fetching data from API .
 
 ## Prompt I used 
 1. what is contoller and Providers in Nestjs ?
@@ -37,14 +37,14 @@ while implemeted code in my project and read nestjs documentation and understand
 
 
 
-# Scalability Questuion 
+# Scalability question
 
 ## If this service reached got 10k requests/second, where would the first bottleneck in current code ?
 
 1. API rate Limit :
     - TMDB allows about 40 requests per 10 seconds per API key .
-    - If service tries to call TMDB 10,000 times per second, it will hit the limit almost instantly because 10,000 ≫ 40.   TMDB will respond with a 429 (Too Many Requests) error .
-     - service doesn’t do any  caching, or optimization .It jsut directly calls api and returns response .
+    - If service tries to call TMDB 10,000 times per second, it will hit the limit almost instantly because 10,000 > 40 . TMDB will respond with a 429 (Too Many Requests) error 
+    - service doesn’t do any caching, or optimization . It jsut directly calls api and returns response .
 
 2. Chaching :
      - getGenres() , getPopularMovies() and searchMovies() fetch fresh data every time (every request hits TMDB).
